@@ -367,7 +367,29 @@ class Inventario:
 
     # Rutina para cargar los datos en el árbol
     """ En esta funcion deben ser condiciones las validaciones """
+   def buscar(self, event=None):
+        num_id = self.idNit.get()
 
+        conn = sqlite3.connect('Inventario.db')
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM Proveedores"
+        cursor.execute(query)
+        busqueda = self.run_Query(query)
+
+        for idNit_i in busqueda:
+            if num_id == str(idNit_i[0]):
+                self.razonSocial.delete(0, "end")
+                self.ciudad.delete(0, "end")
+
+                query_productos = "SELECT * FROM Productos WHERE IdNit = ?"
+                cursor.execute(query_productos, (num_id,))
+                productos_encontrados = cursor.fetchall()
+
+                if productos_encontrados:
+                    self.lee_treeProductos(query_productos)
+                    
+                break
     # Boton grabar
     def guardar_datos(self):
         # try except IntegrityError: UNIQUE constraint failed: Productos.idNit, Productos.Codigo
